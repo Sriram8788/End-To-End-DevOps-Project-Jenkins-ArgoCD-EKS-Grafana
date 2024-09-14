@@ -42,6 +42,33 @@ module "log_metric_filter" {
   instance_id = ""
   sns_topic_name = ""
   
+}
 
+resource "aws_instance" "jenkins_server" {
+  ami           = "${data.aws_ami.linux.id}"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "Jakins_server"
+  }
+}
+
+data "aws_ami" "linux" {
+  most_recent = true
+  owners = [ "amazon" ]
+  filter {
+    name   = "name"
+    values = ["al2023-ami-hvm-*-x86_64-gp2"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "Architecture-type"
+    values = ["x86_64"]
+  }
 }
 
