@@ -7,6 +7,14 @@ terraform {
   }
 }
 
+terraform {
+  backend "s3" {
+    bucket = "mybucket"
+    key    = "path/to/my/key"
+    region = "us-east-1"
+  }
+}
+
 provider "aws" {
   region = var.region
 }
@@ -28,19 +36,19 @@ module "log_metric_filter" {
   source  = "terraform-aws-modules/cloudwatch/aws//modules/log-metric-filter"
   version = "~> 3.0"
 
-  log_group_name = "my-application-logs"
-  log_group_retention_in_days = ""
-  log_stream_name = ""
-  alarm_name = "my-application-logs-errors"
-  alarm_comparison_operator = "GreaterThanOrEqualToThreshold"
-  alarm_evaluation_periods  = 1
-  alarm_threshold           = 10
-  alarm_period              = 60
-  alarm_namespace   = "MyApplication"
-  alarm_metric_name = "ErrorCount"
-  alarm_statistic   = "Maximum"
-  instance_id = ""
-  sns_topic_name = ""
+  log_group_name = var.log_group_name
+  log_group_retention_in_days = var.retention_in_days
+  log_stream_name = var.stream_name
+  alarm_name = var.alarm_name
+  alarm_comparison_operator = var.alarm_comparison_operator
+  alarm_evaluation_periods  = var.alarm_evaluation_periods
+  alarm_threshold           = var.alarm_threshold
+  alarm_period              = var.alarm_period
+  alarm_namespace   = var.alarm_namespace
+  alarm_metric_name = var.alarm_metric_name
+  alarm_statistic   = var.alarm_statistic
+  instance_id = var.instance_id
+  sns_topic_name = var.sns_topic_name
   
 }
 
@@ -72,3 +80,17 @@ data "aws_ami" "linux" {
   }
 }
 
+
+module "s3_bucket" {
+  source = "terraform-aws-modules/s3-bucket/aws"
+
+  bucket = "s3-bucket_CD1"
+  acl    = "private"
+
+  control_object_ownership = true
+  object_ownership         = "ObjectWriter"
+
+  versioning = {
+    enabled = true
+  }
+}
