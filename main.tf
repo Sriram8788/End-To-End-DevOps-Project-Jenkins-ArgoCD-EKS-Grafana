@@ -19,7 +19,7 @@ module "vpc" {
   public_subnets  = var.public_subnets
   tags = {
     Terraform = "true"
-    Environment = "UAT"
+    Environment = "UAT" 
   }
 }
 
@@ -40,7 +40,8 @@ module "log_metric_filter" {
   alarm_metric_name = "ErrorCount"
   alarm_statistic   = "Maximum"
   instance_id = ""
-  sn
+  sns_topic_name = ""
   
 
 }
+
