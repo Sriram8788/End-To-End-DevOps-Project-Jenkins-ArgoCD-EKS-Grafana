@@ -1,0 +1,40 @@
+- name: Install the docker dependencies
+  yum:
+   name: "{{ items  }}"
+   state: present
+  loop:
+   - apt-transport-https
+   - ca-certificates
+   - curl
+   - software-properties-common
+
+- name: Add docker repository
+  yum_repository:
+    name: "docker"
+    description: add docker repositroy.
+    baseurl: https://download.docker.com/linux/rhel/docker-ce.repo
+
+- name:
+  rpm_key:
+    state: present
+    key: https://download.docker.com/linux/ubuntu/gpg
+
+- name: Install docker 
+  yum:
+   name: docker-ce 
+   state: present
+
+- name: start and enable docker at the boot time
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
+
+- name: add ec2 user to docker group
+  user:
+   name: ec2-user
+   group: docker
+   append: yes
+
+
+  

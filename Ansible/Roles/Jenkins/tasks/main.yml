@@ -1,0 +1,51 @@
+- name: Install the required dependency packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+   - openjdk-17-jdk
+   - git
+   - wget
+   - gnupg  #This package is often required for verifying GPG signatures when installing packages securely from external repositories. 
+   - lsb-release #This package can be useful for determining the distribution version. It's not necessary for Jenkins itself but can be helpful for conditional logic in scripts or when managing package installations based on the OS version.
+
+- name: Add Jenkins repository
+  yum_repository:
+    name: "jenkins"
+    description: add jenkins repositroy.
+    baseurl: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+
+- name: Add Jenkins GPG key
+  rpm_key:
+    state: present
+    key: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+- name: install jenkins
+  yum:
+   name: jenkins
+   state: present
+
+- name: start jenkins using service module
+  service:
+    name: jenkins
+    state: started
+
+- name: enable jenkins at the boot time
+  service:
+    name: jenkins
+    enabled: yes
+
+- name: add jenkins user to docker group, appending the group 'jenkins' and 'developers' to the user's groups
+  ansible.builtin.user:
+    name: jenkins
+    groups: docker
+    append: yes
+
+- name: Fetch jenkins password
+  shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+  changed_when: false
+  register: jenkins_intial_password
+
+- name: print jenkins password
+  debug: 
+    var: jenkins_initial_password
