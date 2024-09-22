@@ -1,0 +1,14 @@
+- 
+ name: Update the kubectl configuration
+ become: ture
+ command: aws eks update-Kubeconfig --name {{ eks_cluster_name }} --region {{ region }} --profile {{ profile }}
+ environment:
+  AWS_DEFAULT_REGION: "{{ region }}"
+  HOME: "{{ ansible_env.HOME }}"
+ register: kubeconfig_output
+ ignore_errors: true
+
+- name: Print kubeconfig output
+  debug:
+    var: kubeconfig_output
+  when: kubeconfig_output.rc != 0
