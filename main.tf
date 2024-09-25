@@ -79,7 +79,7 @@ data "aws_ami" "linux" {
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+    values = ["al2023-ami-2023.5.20240916.0-kernel-6.1-x86_64"]
   }
 
   filter {
@@ -92,6 +92,7 @@ data "aws_ami" "linux" {
     values = ["x86_64"]
   }
 }
+
 
 # Security group for EC2
 resource "aws_security_group" "ec2_sg" {
