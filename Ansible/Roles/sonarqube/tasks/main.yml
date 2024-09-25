@@ -1,10 +1,9 @@
----
 # This is needed to run SonarQube (more accurate ElasticSearch):
-- name: "sysctl -w vm.max_map_count=262144"
+- name: Set vm.max_map_cout=262144
   ansible.posix.sysctl:
     name: vm.max_map_count
     value: '262144'
-    sysctl_set: yes
+    state: present
 
 - name: Create volume directories.
   become: true

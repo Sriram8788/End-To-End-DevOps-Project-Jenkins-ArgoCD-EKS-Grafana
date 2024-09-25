@@ -1,13 +1,13 @@
 plugin: aws_ec2
 regions:
-  - "us-east-1"
+  - us-east-1
+keyed_groups:
+  - key: tags.Name  # Group instances by their 'Name' tag
 filters:
   tag:Name: Jenkins_server
   # All instances with their state as `running`
   instance-state-name: running
-keyed_groups:
-  -  prefix: tag
-     key: tags.Name  # Group instances by their 'Name' tag
 compose:
-# Use the public IP address to connect to the host
+  # Use the public IP address to connect to the host
   ansible_host: public_ip_address
+

@@ -24,12 +24,12 @@
   ignore_errors: true
 
 - name: Install ArgoCD using Helm
-  community.kubernetes.helm:
+  kubernetes.core.helm:
     name: argocd
     chart_ref: argo/argo-cd
     release_namespace: argocd
     create_namespace: true
-    wait: yes
+    wait: true
 
 - name: Patch ArgoCD service to use LoadBalancer type
   kubernetes.core.k8s:

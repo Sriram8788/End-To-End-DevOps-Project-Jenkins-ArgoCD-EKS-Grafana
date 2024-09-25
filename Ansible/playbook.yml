@@ -10,7 +10,7 @@
   hosts: localhost 
   remote_user: ram
   roles:
-   - agrocd
+   - argocd
    - prometheus_grafana
    - Update_config
 
