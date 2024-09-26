@@ -1,37 +1,40 @@
-- name: Install the required dependencies
+- name: Install the docker dependencies
   yum:
-    name: "{{ item }}"
-    state: present
+   name: "{{ items  }}"
+   state: present
   loop:
-    - yum-utils
-    - device-mapper-persistent-data
-    - lvm2
-    - container-selinux
-    - fuse-overlayfs
-    - slirp4netns
+   - yum-utils
+   - device-mapper-persistent-data
+   - lvm2
+
 
 - name: Add docker repository
   yum_repository:
     name: "docker"
-    description: "Add Docker repository."
+    description: "add docker repositroy.:"
     baseurl: "https://download.docker.com/linux/centos/7/x86_64/stable/"
-    gpgcheck: yes
-    enabled: yes
-    gpgkey: "https://download.docker.com/linux/centos/gpg"
 
-- name: Install Docker
-  yum:
-    name: docker-ce
+- name:
+  rpm_key:
     state: present
+    key: "https://download.docker.com/linux/centos/gpg"
 
-- name: Start and enable Docker at boot time
+- name: Install docker 
+  yum:
+   name: docker-ce 
+   state: present
+
+- name: start and enable docker at the boot time
   service:
     name: docker
     state: started
     enabled: yes
 
-- name: Add ec2 user to Docker group
+- name: add ec2 user to docker group
   user:
-    name: ec2-user
-    group: docker
-    append: yes
+   name: ec2-user
+   group: docker
+   append: yes
+
+
+  

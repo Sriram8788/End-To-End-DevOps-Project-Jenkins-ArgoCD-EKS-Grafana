@@ -11,25 +11,26 @@
 - name: Check for existing ArgoCD CRDs
   command: kubectl get crd applicationsets.argoproj.io appprojects.argoproj.io -o json
   register: check_crd
-  ignore_errors: true
+  ignore_errors: yes
 
 - name: Delete existing applicationsets.argoproj.io CRD if it exists
   command: kubectl delete crd applicationsets.argoproj.io
   when: "'applicationsets.argoproj.io' in check_crd.stdout"
-  ignore_errors: true
+  ignore_errors: yes
 
 - name: Delete existing appprojects.argoproj.io CRD if it exists
   command: kubectl delete crd appprojects.argoproj.io
   when: "'appprojects.argoproj.io' in check_crd.stdout"
-  ignore_errors: true
+  ignore_errors: yes
 
 - name: Install ArgoCD using Helm
-  kubernetes.core.helm:
+  kubernetes.core.helm: 
     name: argocd
     chart_ref: argo/argo-cd
     release_namespace: argocd
     create_namespace: true
     wait: true
+
 
 - name: Patch ArgoCD service to use LoadBalancer type
   kubernetes.core.k8s:

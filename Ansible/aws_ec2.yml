@@ -8,6 +8,5 @@ filters:
   # All instances with their state as `running`
   instance-state-name: running
 compose:
-  # Use the public IP address to connect to the host
+# Use the public IP address to connect to the host
   ansible_host: public_ip_address
-

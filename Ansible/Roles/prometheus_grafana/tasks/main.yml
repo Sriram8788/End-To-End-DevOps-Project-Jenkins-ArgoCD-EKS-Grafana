@@ -59,7 +59,7 @@
 
 - name: Install Grafana using Helm
   become: true
-  helm:
+  community.kubernetes.helm:
     name: grafana
     chart_ref: grafana/grafana
     version: "5.0.4"  

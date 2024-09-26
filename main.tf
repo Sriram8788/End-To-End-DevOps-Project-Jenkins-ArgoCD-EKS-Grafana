@@ -61,9 +61,17 @@ resource "aws_instance" "jenkins_server" {
   tags = {
     Name = "Jenkins_server"
   }
-  user_data              = file("./ansible.sh")
+  user_data              = file("./sshd.sh")
+  /*
+  user_data = <<-EOF
+    #!/bin/bash
+    $(cat ./ansible.sh)
+    $(cat ./sshd.sh)
+  EOF
+*/
 }
 
+/*
 resource "null_resource" "install_ansible" {
   # The provisioner will run this command after the Jenkins instance is created
   provisioner "local-exec" {
@@ -72,6 +80,7 @@ resource "null_resource" "install_ansible" {
 
   depends_on = [aws_instance.jenkins_server]
 }
+*/
 
 data "aws_ami" "linux" {
   most_recent = true
@@ -110,7 +119,7 @@ resource "aws_security_group_rule" "ingress_tls" {
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  cidr_blocks       = [var.cidr]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.ec2_sg.id
 }
 
@@ -119,7 +128,7 @@ resource "aws_security_group_rule" "ingress_http" {
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  cidr_blocks       = [var.cidr]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.ec2_sg.id
 }
 
@@ -128,7 +137,7 @@ resource "aws_security_group_rule" "ingress_ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = [var.cidr]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.ec2_sg.id
 }
 
@@ -299,6 +308,8 @@ resource "aws_cloudwatch_log_metric_filter" "log_metric_filter" {
     namespace = var.alarm_namespace # Change this to your own namespace, e.g., "Custom/EKS"
     value     = "1"
   }
+  depends_on = [aws_cloudwatch_log_group.log_group]  # Add this line
+  
 }
 
 # CloudWatch Alarm

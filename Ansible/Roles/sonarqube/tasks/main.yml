@@ -1,13 +1,13 @@
 # This is needed to run SonarQube (more accurate ElasticSearch):
-- name: Set vm.max_map_cout=262144
-  ansible.posix.sysctl:
+- name: sysctl -w vm.max_map_count=262144
+  sysctl:
     name: vm.max_map_count
     value: '262144'
     state: present
 
 - name: Create volume directories.
   become: true
-  ansible.builtin.file:
+  file:
     owner: root
     group: root
     name: "{{item}}"
@@ -78,7 +78,7 @@
         target: /opt/sonarqube/logs
 
 - name: "Wait until SonarQube Container is reachable via TCP/IP."
-  ansible.builtin.wait_for:
+  wait_for:
     host: "localhost"
     port: "{{ sonarqube_port }}"
     state: drained
@@ -87,7 +87,7 @@
     timeout: 30
 
 - name: Check SonarQube to be healthy.
-  ansible.builtin.uri:
+  uri:
     url: "http://localhost:{{ sonarqube_port }}/api/system/health"
     user: "{{ sonarqube_admin_login }}"
     password: "{{ sonarqube_admin_password }}"
@@ -101,7 +101,7 @@
   delay: 6 # every 5 seconds
 
 - name: Create CI User
-  ansible.builtin.uri:
+  uri:
     url: "http://localhost:{{ sonarqube_port }}/api/users/create?local=true&login={{ sonarqube_ci_login }}&name={{ sonarqube_ci_name | urlencode }}&password={{ sonarqube_ci_password }}"
     user: "{{ sonarqube_admin_login }}"
     password: "{{ sonarqube_admin_password }}"
@@ -111,7 +111,7 @@
   failed_when: ciresponse.status != 200
 
 - name: Create CI User Token.
-  ansible.builtin.uri:
+  uri:
     url: "http://localhost:{{ sonarqube_port }}/api/user_tokens/generate?login={{ sonarqube_ci_login }}&name={{ sonarqube_ci_token_purpose | urlencode }}"
     user: "{{ sonarqube_ci_login }}"
     password: "{{ sonarqube_ci_password }}"

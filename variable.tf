@@ -19,6 +19,10 @@ variable "public_subnets" {
   type = list(string)
 }
 
+variable "ami_name" {
+  type = string
+}
+
 variable "log_group_name" {
   type = string
 }
