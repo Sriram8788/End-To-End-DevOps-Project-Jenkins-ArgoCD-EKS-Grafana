@@ -5,6 +5,13 @@ pip3 install boto3 botocore
 sudo yum install git -y
 ansible-galaxy collection install community.kubernetes
 
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+
 git clone https://github.com/Sriram8788/End-To-End-DevOps-Project-Jenkins-ArgoCD-EKS-Grafana.git
 
 mv End-To-End-DevOps-Project-Jenkins-ArgoCD-EKS-Grafana Devops_project
