@@ -1,0 +1,16 @@
+---
+- hosts: all
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Copy SSH public key to EC2 instances
+      ansible.builtin.shell: |
+        echo "{{ lookup('file', '/home/ec2-user/.ssh/authorized_keys') }}" >> /home/ec2-user/.ssh/authorized_keys
+      args:
+        executable: /bin/bash
+      become_user: ec2-user
+      remote_user: ec2-user
+      vars:
+        ansible_ssh_private_key_file: /home/ec2-user/Devops_project/sonar.pem
+
+      

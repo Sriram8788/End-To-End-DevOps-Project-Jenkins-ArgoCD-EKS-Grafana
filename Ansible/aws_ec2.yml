@@ -4,7 +4,7 @@ regions:
 keyed_groups:
   - key: tags.Name  # Group instances by their 'Name' tag
 filters:
-  tag:Name: Jenkins_server
+  #tag:Name: Jenkins_server
   # All instances with their state as `running`
   instance-state-name: running
 compose:
