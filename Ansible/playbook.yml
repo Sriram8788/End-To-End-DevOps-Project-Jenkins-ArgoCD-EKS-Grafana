@@ -5,7 +5,11 @@
   - Docker
   - Jenkins
   - sonarqube
+  - argocd
+   - prometheus_grafana
+   - Update_config
 
+/*
 - name: Set up EKS cluster and install ArgoCD, Prometheus, Grafana
   hosts: localhost 
   remote_user: ram
@@ -14,3 +18,4 @@
    - prometheus_grafana
    - Update_config
 
+*/
