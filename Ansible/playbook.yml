@@ -6,8 +6,8 @@
   - Jenkins
   - sonarqube
   - argocd
-   - prometheus_grafana
-   - Update_config
+  - prometheus_grafana
+  - Update_config
 
 /*
 - name: Set up EKS cluster and install ArgoCD, Prometheus, Grafana
