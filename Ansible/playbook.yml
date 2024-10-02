@@ -1,6 +1,6 @@
 -
  name: Install Docker, Jenkins, and SonarQube
- hosts: all
+ hosts: localhost
  roles:
   - Docker
   - Jenkins
@@ -9,13 +9,10 @@
   - prometheus_grafana
   - Update_config
 
-/*
-- name: Set up EKS cluster and install ArgoCD, Prometheus, Grafana
-  hosts: localhost 
-  remote_user: ram
-  roles:
-   - argocd
-   - prometheus_grafana
-   - Update_config
-
-*/
+#- name: Set up EKS cluster and install ArgoCD, Prometheus, Grafana
+#  hosts: localhost 
+#  remote_user: ram
+#  roles:
+#   - argocd
+#   - prometheus_grafana
+#   - Update_co/nfig

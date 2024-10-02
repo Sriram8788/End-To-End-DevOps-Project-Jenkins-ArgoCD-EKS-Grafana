@@ -1,51 +1,74 @@
+---
 - name: Install the required dependency packages
-  yum:
+  dnf:
     name: "{{ item }}"
     state: present
   loop:
-   - openjdk-17-jdk
-   - git
-   - wget
-   - gnupg  #This package is often required for verifying GPG signatures when installing packages securely from external repositories. 
-   - lsb-release #This package can be useful for determining the distribution version. It's not necessary for Jenkins itself but can be helpful for conditional logic in scripts or when managing package installations based on the OS version.
+    - java-17-amazon-corretto
+    - git
+    - wget
+    - gnupg
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
 
 - name: Add Jenkins repository
-  yum_repository:
-    name: "jenkins"
-    description: add jenkins repositroy.
-    baseurl: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+  copy:
+    dest: /etc/yum.repos.d/jenkins.repo
+    content: |
+      [jenkins]
+      name=Jenkins
+      baseurl=https://pkg.jenkins.io/redhat-stable/
+      gpgcheck=1
+      gpgkey=https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+      enabled=1
 
-- name: Add Jenkins GPG key
-  rpm_key:
+- name: Clear DNF cache
+  command: dnf clean all
+
+- name: Make sure DNF cache is updated
+  command: dnf makecache
+
+- name: Install Jenkins
+  dnf:
+    name: jenkins
     state: present
-    key: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+  register: jenkins_install_result
 
-- name: install jenkins
-  yum:
-   name: jenkins
-   state: present
+- name: Check if Jenkins was installed successfully
+  debug:
+    msg: "Jenkins installation result: {{ jenkins_install_result }}"
+  when: jenkins_install_result is changed
 
-- name: start jenkins using service module
+- name: Wait for a few seconds for the system to catch up
+  pause:
+    seconds: 5
+
+- name: Start Jenkins service
   service:
     name: jenkins
     state: started
+    enabled: true
+  register: jenkins_service_start
+  failed_when: jenkins_service_start is failed
 
-- name: enable jenkins at the boot time
-  service:
-    name: jenkins
-    enabled: yes
+- name: Check Jenkins service status
+  command: systemctl status jenkins
+  register: jenkins_service_status
+  ignore_errors: true
 
-- name: add jenkins user to docker group, appending the group 'jenkins' and 'developers' to the user's groups
-  ansible.builtin.user:
-    name: jenkins
-    groups: docker
-    append: yes
+- name: Display Jenkins service status
+  debug:
+    msg: "{{ jenkins_service_status.stdout }}"
 
-- name: Fetch jenkins password
+- name: Fetch Jenkins initial admin password
   shell: cat /var/lib/jenkins/secrets/initialAdminPassword
   changed_when: false
-  register: jenkins_intial_password
+  register: jenkins_initial_password
+  ignore_errors: true  # Ignore errors if the file does not exist
 
-- name: print jenkins password
-  debug: 
-    var: jenkins_initial_password
+- name: Display Jenkins initial admin password
+  debug:
+    msg: "Jenkins initial admin password: {{ jenkins_initial_password.stdout }}"
+  when: jenkins_initial_password.stdout is defined
+
